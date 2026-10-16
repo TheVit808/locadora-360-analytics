@@ -1,4 +1,4 @@
-CREATE VIEW IF NOT EXISTS vw_conflitos_reserva AS
+CREATE VIEW IF NOT EXISTS vw_conflitos_reservas AS
 SELECT
     r1.ID_Reserva AS ID_Reserva_A,
     r2.ID_Reserva AS ID_Reserva_B,
@@ -27,7 +27,7 @@ WITH reservas AS (
     FROM RESERVA r
     JOIN VEICULO v ON v.ID_Veiculo = r.ID_Veiculo
     JOIN MODELO m ON m.ID_Modelo = v.ID_Modelo
-    WHERE r.Status_Reserva IN ('Confirmada', 'Pendente', 'Em Locacao', 'Cancelada', 'Finalizada')
+    WHERE r.Status_Reserva IN ('Cancelada', 'Finalizada')
     GROUP BY m.ID_Categoria, r.Data_Retirada_Prevista, r.Data_Devolucao_Prevista
 )
 SELECT
