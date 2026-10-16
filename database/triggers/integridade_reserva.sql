@@ -13,28 +13,22 @@ DROP TRIGGER IF EXISTS insert_manutencao_conflita_reserva;
 DROP TRIGGER IF EXISTS update_manutencao_conflita_reserva;
 
 CREATE TRIGGER reserva_validar_datas_update
-BEFORE UPDATE OF
-    Data_Retirada_Prevista,
-    Data_Devolucao_Prevista
-ON RESERVA
+BEFORE INSERT ON RESERVA
 FOR EACH ROW
 WHEN NEW.Data_Devolucao_Prevista <= NEW.Data_Retirada_Prevista
 BEGIN
-    SELECT RAISE(
-        ABORT,
-        'RESERVA_INTERVALO_INVALIDO'
-    );
+    SELECT RAISE(ABORT, 'RESERVA_INTERVALO_INVALIDO');
 END;
 
 CREATE TRIGGER reserva_sem_sobreposicao
 BEFORE INSERT ON RESERVA
 FOR EACH ROW
-WHEN NEW.Status_Reserva IN ('Confirmada', 'Pendente', 'Em Locação')
+WHEN NEW.Status_Reserva NOT IN ('Cancelada', 'Finalizada')
  AND EXISTS (
     SELECT 1
     FROM RESERVA r
     WHERE r.ID_Veiculo = NEW.ID_Veiculo
-      AND r.Status_Reserva IN ('Confirmada', 'Pendente', 'Em Locação')
+      AND r.Status_Reserva NOT IN ('Cancelada', 'Finalizada')
       AND NEW.Data_Retirada_Prevista < r.Data_Devolucao_Prevista
       AND NEW.Data_Devolucao_Prevista > r.Data_Retirada_Prevista
  )
@@ -69,7 +63,7 @@ END;
 CREATE TRIGGER reserva_data_sem_sobreposicao
 BEFORE UPDATE OF Data_Retirada_Prevista, Data_Devolucao_Prevista, id_veiculo, status_reserva ON RESERVA
 FOR EACH ROW
-WHEN NEW.Status_Reserva IN ('Confirmada', 'Pendente', 'Em Locação')
+WHEN NEW.Status_Reserva NOT IN ('Cancelada', 'Finalizada')
 BEGIN
     SELECT CASE 
         WHEN EXISTS (

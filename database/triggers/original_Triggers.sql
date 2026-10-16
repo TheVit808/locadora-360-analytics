@@ -20,17 +20,17 @@ FOR EACH ROW
 WHEN NEW.Quilometragem_Devolucao IS NOT NULL
 BEGIN
   UPDATE VEICULO
-  SET Quilometragem_Atual = NEW.Quilometragem_Devolucao
+  SET Quilometragem_Atual_Veiculo = NEW.Quilometragem_Devolucao
   WHERE ID_Veiculo = NEW.ID_Veiculo;
 END;  
 
 -- Atualizar Status do Veículo
--- Para: Alugado  
+-- Para: Locacao  
 CREATE TRIGGER atualizar_status_veiculo_alug
 AFTER INSERT ON ALUGUEL
 BEGIN
   UPDATE VEICULO
-  SET Status_Veiculo = 'Alugado'
+  SET Status_Veiculo = 'Locacao'
   WHERE ID_Veiculo = NEW.ID_Veiculo;
 END;
 -- Para: Disponivel  
@@ -96,8 +96,8 @@ BEGIN
   SET Status_Reserva =
     CASE
       WHEN NEW.Data_Devolucao_Real IS NOT NULL THEN 'Concluido'
-      WHEN NEW.Data_Retirada_Real IS NOT NULL AND NEW.Data_Devolucao_Real IS NULL THEN 'Em Locação'
-      ELSE 'Em Espera'
+      WHEN NEW.Data_Retirada_Real IS NOT NULL AND NEW.Data_Devolucao_Real IS NULL THEN 'Em Locacao'
+      ELSE 'Pendente'
     END
   WHERE ID_Reserva = NEW.ID_Reserva;
 END;

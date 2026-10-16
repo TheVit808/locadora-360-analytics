@@ -1,4 +1,4 @@
-CREATE VIEW IF NOT EXISTS vw_conflitos_reservas AS
+CREATE VIEW IF NOT EXISTS vw_conflitos_reserva AS
 SELECT
     r1.ID_Reserva AS ID_Reserva_A,
     r2.ID_Reserva AS ID_Reserva_B,
@@ -12,8 +12,8 @@ FROM RESERVA r1
 JOIN RESERVA r2
   ON r1.ID_Veiculo = r2.ID_Veiculo
  AND r1.ID_Reserva < r2.ID_Reserva
- AND r1.Status_Reserva IN ('Confirmada', 'Pendente', 'Em Locação')
- AND r2.Status_Reserva IN ('Confirmada', 'Pendente', 'Em Locação')
+ AND r1.Status_Reserva IN ('Confirmada', 'Pendente', 'Em Locacao', 'Cancelada', 'Finalizada')
+ AND r2.Status_Reserva IN ('Confirmada', 'Pendente', 'Em Locacao', 'Cancelada', 'Finalizada')
  AND r1.Data_Retirada_Prevista < r2.Data_Devolucao_Prevista
  AND r1.Data_Devolucao_Prevista > r2.Data_Retirada_Prevista;
 
@@ -27,7 +27,7 @@ WITH reservas AS (
     FROM RESERVA r
     JOIN VEICULO v ON v.ID_Veiculo = r.ID_Veiculo
     JOIN MODELO m ON m.ID_Modelo = v.ID_Modelo
-    WHERE r.Status_Reserva IN ('Confirmada', 'Pendente', 'Em Locação')
+    WHERE r.Status_Reserva IN ('Confirmada', 'Pendente', 'Em Locacao', 'Cancelada', 'Finalizada')
     GROUP BY m.ID_Categoria, r.Data_Retirada_Prevista, r.Data_Devolucao_Prevista
 )
 SELECT
@@ -50,6 +50,6 @@ UNION ALL
 SELECT r.ID_Reserva, 'RESERVA_EM_MANUTENCAO', 'ALTA'
 FROM RESERVA r
 JOIN MANUTENCAO m ON m.ID_Veiculo = r.ID_Veiculo
-WHERE r.Status_Reserva IN ('Confirmada', 'Pendente', 'Em Locação')
+WHERE r.Status_Reserva IN ('Confirmada', 'Pendente', 'Em Locacao', 'Cancelada', 'Finalizada')
   AND r.Data_Retirada_Prevista < COALESCE(m.Data_Conclusao_Manutencao, '9999-12-31')
   AND r.Data_Devolucao_Prevista > m.Data_Retirada_Manutencao;
