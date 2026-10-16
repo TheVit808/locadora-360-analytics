@@ -1,0 +1,27 @@
+PRAGMA foreign_keys = ON;
+
+CREATE TABLE IF NOT EXISTS RESERVA_EVENTO (
+    ID_Evento INTEGER PRIMARY KEY AUTOINCREMENT,
+    ID_Reserva INTEGER NOT NULL,
+    Tipo_Evento TEXT NOT NULL CHECK (
+        Tipo_Evento IN ('CRIADA', 'STATUS_ALTERADO', 'ATUALIZADA', 'CANCELADA')
+    ),
+    Status_Anterior TEXT,
+    Status_Novo TEXT,
+    Data_Evento TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    Origem TEXT NOT NULL DEFAULT 'database_trigger',
+    Observacao TEXT,
+    FOREIGN KEY (ID_Reserva) REFERENCES RESERVA(ID_Reserva)
+);
+
+CREATE INDEX IF NOT EXISTS IX_RESERVA_EVENTO_RESERVA_DATA
+    ON RESERVA_EVENTO (ID_Reserva, Data_Evento);
+
+CREATE INDEX IF NOT EXISTS IX_RESERVA_VEICULO_INTERVALO
+    ON RESERVA (ID_Veiculo, Data_Retirada_Prevista, Data_Devolucao_Prevista);
+
+CREATE INDEX IF NOT EXISTS IX_ALUGUEL_VEICULO_INTERVALO
+    ON ALUGUEL (ID_Veiculo, Data_Retirada_Real, Data_Devolucao_Real);
+
+CREATE INDEX IF NOT EXISTS IX_MANUTENCAO_VEICULO_INTERVALO
+    ON MANUTENCAO (ID_Veiculo, Data_Retirada_Manutencao, Data_Conclusao_Manutencao);
