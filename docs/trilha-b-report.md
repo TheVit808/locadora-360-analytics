@@ -1,0 +1,9 @@
+- total de jornadas;
+- pesquisas, cotações, reservas, retiradas e devoluções;
+- conversão em cada etapa;
+- campanha com maior receita estimada;
+- campanha com maior ROI entre as que possuem custo;
+- canal com maior conversão Cotação-Reserva;
+- coorte com maior retenção no mês 1;
+- ocupação prevista por categoria;
+- cenário de desconto/upgrade selecionado e sua premissa.

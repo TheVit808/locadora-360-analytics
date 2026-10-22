@@ -1,0 +1,84 @@
+Pesquisas =
+CALCULATE(
+    DISTINCTCOUNT(Fact_Funil_Evento[Journey_ID]),
+    Fact_Funil_Evento[Tipo_Evento] = "PESQUISA"
+)
+
+Cotações =
+CALCULATE(
+    DISTINCTCOUNT(Fact_Funil_Evento[Journey_ID]),
+    Fact_Funil_Evento[Tipo_Evento] = "COTACAO"
+)
+
+Reservas =
+CALCULATE(
+    DISTINCTCOUNT(Fact_Funil_Evento[Journey_ID]),
+    Fact_Funil_Evento[Tipo_Evento] = "RESERVA"
+)
+
+Retiradas =
+CALCULATE(
+    DISTINCTCOUNT(Fact_Funil_Evento[Journey_ID]),
+    Fact_Funil_Evento[Tipo_Evento] = "RETIRADA"
+)
+
+Devoluções =
+CALCULATE(
+    DISTINCTCOUNT(Fact_Funil_Evento[Journey_ID]),
+    Fact_Funil_Evento[Tipo_Evento] = "DEVOLUCAO"
+)
+
+Cancelamentos =
+CALCULATE(
+    DISTINCTCOUNT(Fact_Funil_Evento[Journey_ID]),
+    Fact_Funil_Evento[Tipo_Evento] = "CANCELAMENTO"
+)
+
+No Shows =
+CALCULATE(
+    DISTINCTCOUNT(Fact_Funil_Evento[Journey_ID]),
+    Fact_Funil_Evento[Tipo_Evento] = "NO_SHOW"
+)
+
+Conversão Pesquisa-Cotação =
+DIVIDE([Cotações], [Pesquisas])
+
+Conversão Cotação-Reserva =
+DIVIDE([Reservas], [Cotações])
+
+Conversão Reserva-Retirada =
+DIVIDE([Retiradas], [Reservas])
+
+Taxa de Cancelamento =
+DIVIDE([Cancelamentos], [Reservas] + [Cancelamentos])
+
+Receita Líquida Estimada =
+SUM(Fact_Funil_Evento[Receita_Liquida_Estimada])
+
+Receita por Retirada =
+DIVIDE([Receita Líquida Estimada], [Retiradas])
+
+Custo de Campanha =
+SUM(Fact_Campanha_Custo[Custo_Total])
+
+ROI Campanha =
+IF(
+    [Custo de Campanha] > 0,
+    DIVIDE([Receita Líquida Estimada] - [Custo de Campanha], [Custo de Campanha]),
+    BLANK()
+)
+
+CAC Estimado =
+DIVIDE([Custo de Campanha], [Reservas])
+
+Ticket Médio Estimado =
+DIVIDE([Receita Líquida Estimada], [Devoluções])
+
+Upgrade Rate =
+DIVIDE(
+    CALCULATE(
+        DISTINCTCOUNT(Fact_Funil_Evento[Journey_ID]),
+        Fact_Funil_Evento[Tipo_Evento] = "UPGRADE"
+    ),
+    [Reservas]
+)
